@@ -45,6 +45,7 @@ function  start() {
                     addDep();
                     break;
                 case '5. add a role':
+                    addRole();
                     break;
                 case '6. add an employee':
                     break;
@@ -74,11 +75,41 @@ function addDep() {
             name: 'newDep',
             message: 'Enter a new department name -->'
         }
-    ])
-        .then((res) => {
-            db.query(`INSERT INTO department (name) VALUES (?)`, res.newDep, (err, result) => {
-                console.log(`ok!`);
+    ]).then((res) => {
+        db.query(`INSERT INTO department (name) VALUES (?)`, res.newDep, (err, result) => {
+            console.log('ok!');
+            start();
+        })
+    })
+}
+// add a new role
+const addRole = () => {
+    db.query(`SELECT * FROM department`, (err, result) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'newRole',
+                message: 'Enter a name of the role -->'
+            },
+            {
+                type: 'input',
+                name: 'newSalary',
+                message: 'Enter salary -->'
+            },
+            {
+                type: 'list',
+                name: 'dep',
+                message: 'Which department has this role?',
+                choices: result.map(dep => dep.name)
+            }
+        ]).then((data) => {
+            db.query(`INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`, 
+            [data.newRole, data.newSalary, result.find(dep => dep.name === data.dep).id], (err, res) => {
+                console.log('ok!');
                 start();
             })
         })
+    })
 }
+
