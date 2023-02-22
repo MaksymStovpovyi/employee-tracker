@@ -42,10 +42,13 @@ function  start() {
                     view('employee');
                     break;
                 case '4. add a department':
+                    addDep();
                     break;
                 case '5. add a role':
                     break;
                 case '6. add an employee':
+                    break;
+                case '7. update an employee role':
                     break;
                 case '8. exit':
                     db.end();
@@ -58,8 +61,24 @@ start();
 // view function
 function view(para) {
     db.query(`SELECT * FROM ${para}`, (err, result) => {
-        if (err) throw err;
         console.table(result);
         start();
     })
+}
+
+// add a department
+function addDep() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newDep',
+            message: 'Enter a new department name -->'
+        }
+    ])
+        .then((res) => {
+            db.query(`INSERT INTO department (name) VALUES (?)`, res.newDep, (err, result) => {
+                console.log(`ok!`);
+                start();
+            })
+        })
 }
