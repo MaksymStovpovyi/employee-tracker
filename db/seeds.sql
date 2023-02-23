@@ -4,8 +4,8 @@ VALUES ("development"),
        ("SMM");
 
 INSERT INTO role (title, salary, department_id)
-VALUES ("Front-end", 1001, 1),
-       ("Back-end", 1001, 1),
+VALUES ("Front-end dev", 1001, 1),
+       ("Back-end dev", 1001, 1),
        ("SEO-manager", 1002, 2),
        ("SMM-manager", 1003, 3);
 
