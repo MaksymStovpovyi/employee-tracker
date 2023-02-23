@@ -113,3 +113,42 @@ const addRole = () => {
     })
 }
 
+// add an employee
+function addEmp() {
+    db.query(`SELECT * FROM employee`, (err, res) => {
+        db.query(`SELECT * FROM role`, (err, resTwo) => {
+            inquirer.prompt([
+                {
+                    type: 'input',
+                    name: 'firstName',
+                    message: 'Enter the first name of the new employee --> '
+
+                },
+                {
+                    type: 'input',
+                    name: 'lastName',
+                    message: 'Enter the last name of the new employee --> '
+
+                },
+                {
+                    type: 'list',
+                    name: 'role',
+                    message: 'Select the role of the new employee:',
+                    choices: resTwo.map(role => role.title)
+                },
+                {
+                    type: 'list',
+                    name: 'manager',
+                    message: 'Select the manager of new employee:',
+                    choices: res.map(employee => `${employee.first_name} ${employee.last_name}`)
+                }
+            ]).then((data) => {
+                db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, 
+                [data.firstName, data.lastName, resTwo.find(role => role.title === data.role).id, res.find(employee => `${employee.first_name} ${employee.last_name}` === data.manager).id], (err, res) => {
+                    console.log('ok!');
+                    start();
+                })
+            })
+        })
+    })
+}
