@@ -48,8 +48,10 @@ function  start() {
                     addRole();
                     break;
                 case '6. add an employee':
+                    addEmp();
                     break;
                 case '7. update an employee role':
+                    updateRole();
                     break;
                 case '8. exit':
                     db.end();
@@ -83,7 +85,7 @@ function addDep() {
     })
 }
 // add a new role
-const addRole = () => {
+function addRole() {
     db.query(`SELECT * FROM department`, (err, result) => {
         if (err) throw err;
         inquirer.prompt([
@@ -145,6 +147,35 @@ function addEmp() {
             ]).then((data) => {
                 db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, 
                 [data.firstName, data.lastName, resTwo.find(role => role.title === data.role).id, res.find(employee => `${employee.first_name} ${employee.last_name}` === data.manager).id], (err, res) => {
+                    console.log('ok!');
+                    start();
+                })
+            })
+        })
+    })
+}
+
+// update role
+function updateRole() {
+    db.query(`SELECT * FROM employee`, (err, res) => {
+        db.query(`SELECT * FROM role`, (err, resTwo) => {
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'employee',
+                    message: 'Select the employee:',
+                    choices: res.map(employee => `${employee.first_name} ${employee.last_name}`)
+                },
+                {
+                    type: 'list',
+                    name: 'role',
+                    message: 'Select the new role:',
+                    choices: resTwo.map(role => role.title)
+                }
+            ]).then((data) => {
+                db.query(`UPDATE employee SET role_id = ? WHERE id = ?`, 
+                [resTwo.find(role => role.title === data.role).id, res.find(employee => `${employee.first_name} ${employee.last_name}` === data.employee).id], 
+                (err, res) => {
                     console.log('ok!');
                     start();
                 })
